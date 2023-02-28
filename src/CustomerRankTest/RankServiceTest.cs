@@ -1,5 +1,7 @@
 using CustomerRankAPI;
 using CustomerRankAPI.Service;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Text.Json;
 using Xunit.Abstractions;
 
@@ -24,29 +26,64 @@ namespace CustomerRankTest
            (388192,-1),
            (388193,98),
            (15514665, 121),
+           (388192,98),
         };
 
         private readonly IRankService _service;
         private readonly ITestOutputHelper _output;
         public RankServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _service = new CustomerRankSortedArray();
+            _service = new CustomerRankOffsetAlg();
 
             _output = testOutputHelper;
         }
+
+
+
+        private List<(long CustomerId, int Score)> GenerateTestData(int n)
+        {
+            var ret = new List<(long CustomerId, int Score)>();
+            for (var i = 0; i < n; i++)
+            {
+                var customerid = new Random().NextInt64(100000, long.MaxValue);
+                var score = new Random().Next(-100, 10000);
+                ret.Add((customerid, score));
+            }
+            return ret;
+        }
+        [Fact]
+        public void UpdateScorePerformanceTest()
+        {
+            var n = 100000;
+            var testData = GenerateTestData(n);
+
+            var sw = new Stopwatch();
+            sw.Start();
+            testData.AsParallel().ForAll(item =>
+            {
+                _service.UpdateCustomerScore(item.CustomerId, item.Score);
+            });
+            sw.Stop();
+            _output.WriteLine($"ori update  {n} elapsed time:{sw.ElapsedMilliseconds}  ms");
+
+            Assert.True(true);
+        }
+
+
+
         [Fact]
         public void UpdateScoreTest()
         {
-            TestData.ForEach(item =>
+            var n = 100000;
+            var testData = GenerateTestData(n);
+            var sw = new Stopwatch();
+            sw.Start();
+            testData.ForEach(item =>
             {
-                _service.UpdateCustomerScore(item.CustomerId, item.Socre);
-                _output.WriteLine($"inserted -----");
-                for (long t = 0; t < _service.Length; t++)
-                {
-                    _output.WriteLine($"customer id : {_service.SortedArray[t].Customerid},score:{_service.SortedArray[t].Score}");
-
-                }
+                _service.UpdateCustomerScore(item.CustomerId, item.Score);
             });
+            sw.Stop();
+            _output.WriteLine($"ori update  {n} elapsed time:{sw.ElapsedMilliseconds}  ms");
             Assert.True(true);
         }
 
@@ -56,10 +93,16 @@ namespace CustomerRankTest
             TestData.ForEach(item =>
             {
                 _service.UpdateCustomerScore(item.CustomerId, item.Socre);
+                _output.WriteLine($"inserted -----");
+                for (long t = 0; t < _service.Length; t++)
+                {
+                    var itemT = _service.SortedArray[t];
+                    _output.WriteLine($"customer id : {itemT.Customerid},score:{itemT.Score},rank:{_service.CustomerRank[itemT.Customerid]}");
+
+                }
             });
-
-
-            var ret = _service.GetCustomersByRank(1, 10);
+            _output.WriteLine($"-----result -----");
+            var ret = _service.GetCustomersByRank(10, 20);
 
             foreach (var item in ret)
             {

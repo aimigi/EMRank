@@ -36,7 +36,7 @@ namespace CustomerRankAPI.Controllers
             }
             else
             {
-                return BadRequest("update failed");
+                return BadRequest("update failed,please retry.");
             }
         }
 
@@ -49,7 +49,7 @@ namespace CustomerRankAPI.Controllers
 
         [HttpGet("leaderboard/{customerid}")]
         public IActionResult GetCustomersByScore(long customerid, int high, int low)
-        { 
+        {
             var ret = _service.GetCustomerNearRank(customerid, high, low);
             return Ok(ret);
         }

@@ -3,6 +3,7 @@
     public class CustomerRankSortedArray : IRankService
     {
         private readonly object _lock = new object();
+        private volatile int _isSafe = 1;
         // data repo
         public (long Customerid, int Score)[] SortedArray { get; private set; }
 
@@ -12,9 +13,14 @@
         private long _length = 0;
         public long Length { get { return _length; } }
 
+        public Dictionary<long, long> CustomerRank => throw new NotImplementedException();
+
+        private Dictionary<long, int> _customerRank;
+
         public CustomerRankSortedArray()
         {
             SortedArray = new (long Customerid, int Score)[_capacity];
+            _customerRank = new Dictionary<long, int>();
         }
 
         public IEnumerable<CustomerScoreRankModel> GetCustomerNearRank(long customerid, int high, int low)
@@ -59,6 +65,10 @@
             if (start > end)
             {
                 throw new ArgumentException("start cannot greater than end.");
+            }
+            if (start > _length)
+            {
+                throw new ArgumentException("start over limit.");
             }
             if (end > _length)
             {
@@ -106,6 +116,44 @@
                 return true;
             }
         }
+
+        // https://duongnt.com/interlocked-synchronization/
+        // https://www.cnblogs.com/5iedu/p/4719625.html
+        // https://learn.microsoft.com/zh-cn/dotnet/api/system.threading.interlocked.exchange?redirectedfrom=MSDN&view=net-7.0#System_Threading_Interlocked_Exchange_System_Int32__System_Int32_
+        public bool UpdateCustomerScoreEx(long customerid, int score)
+        {
+            if (Interlocked.Exchange(ref _isSafe, 0) == 1)
+            {
+                var index = FindIndex(customerid);
+                if (index >= 0)
+                {
+                    var oldScore = SortedArray[index].Score;
+                    var newScore = oldScore + score;
+                    SortedArray[index] = (customerid, newScore);
+                    if (score > 0)
+                    {
+                        QuickInsertLeft(index);
+                    }
+                    else
+                    {
+                        QuickInsertRight(index);
+                    }
+                }
+                else
+                {
+                    if (_length + 1 == _capacity)
+                    {
+                        Resize();
+                    }
+                    QuickInsert((customerid, score));
+                }
+                Interlocked.Exchange(ref _isSafe, 1);
+                return true;
+            }
+            return false;
+        }
+
+
 
         private void QuickInsertLeft(long index)
         {
@@ -172,17 +220,19 @@
                 }
                 index = i;
             }
-            for (long j = _length; j > index; j--)
+            _length++;
+            for (long j = _length - 1; j > index; j--)
             {
                 SortedArray[j] = SortedArray[j - 1];
             }
             SortedArray[index] = item;
-            _length++;
+
         }
 
         private void Resize()
         {
-            var newArray = new (long Customerid, int Score)[(long)(_capacity * 1.5)];
+            _capacity = (long)(_capacity * 1.5);
+            var newArray = new (long Customerid, int Score)[_capacity];
 
             for (long i = 0; i < _length; i++)
             {
