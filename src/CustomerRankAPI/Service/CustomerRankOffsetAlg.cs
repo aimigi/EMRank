@@ -1,6 +1,4 @@
-﻿using static System.Formats.Asn1.AsnWriter;
-
-namespace CustomerRankAPI.Service
+﻿namespace CustomerRankAPI.Service
 {
     public class CustomerRankOffsetAlg : IRankService
     {

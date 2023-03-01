@@ -1,8 +1,5 @@
-using CustomerRankAPI;
 using CustomerRankAPI.Service;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Text.Json;
 using Xunit.Abstractions;
 
 namespace CustomerRankTest
