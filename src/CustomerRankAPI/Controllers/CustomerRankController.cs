@@ -10,14 +10,7 @@ namespace CustomerRankAPI.Controllers
         public CustomerRankController(IRankService rankService)
         {
             _service = rankService;
-        }
-
-        [Obsolete]
-        [HttpGet("customers")]
-        public IActionResult ShowAll()
-        {
-            return new OkObjectResult(DataRepo.CustomerSocre);
-        }
+        }      
 
         [HttpPost("customer/{customerid}/score/{score}")]
         public IActionResult UpdateScore(long customerid, int score)
