@@ -102,7 +102,7 @@ namespace CustomerRankTest
                 }
             });
             _output.WriteLine($"-----result -----");
-            var ret = _service.GetCustomersByRank(10, 20);
+            var ret = _service.GetCustomersByRank(1, 20);
 
             foreach (var item in ret)
             {

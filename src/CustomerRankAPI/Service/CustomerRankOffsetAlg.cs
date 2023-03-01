@@ -1,4 +1,6 @@
-﻿namespace CustomerRankAPI.Service
+﻿using static System.Formats.Asn1.AsnWriter;
+
+namespace CustomerRankAPI.Service
 {
     public class CustomerRankOffsetAlg : IRankService
     {
@@ -86,15 +88,26 @@
                     var oldScore = SortedArray[index].Score;
                     var newScore = oldScore + score;
                     SortedArray[index] = (customerid, newScore);
-
-                    if (score > 0)
+                   
+                    // remove customer
+                    if (newScore == 0)
                     {
-                        QuickChangeOffset(index, 0, index);
+                        _customerRank.Remove(customerid);
+                        ChangeLeftOffset(index);
+                        _length--;
                     }
                     else
                     {
-                        QuickChangeOffset(index, index, _length - 1);
+                        if (score > 0)
+                        {
+                            QuickChangeOffset(index, 0, index);
+                        }
+                        else
+                        {
+                            QuickChangeOffset(index, index, _length - 1);
+                        }
                     }
+
                 }
                 else
                 {
@@ -111,6 +124,14 @@
             else
             {
                 return false;
+            }
+        }
+
+        private void ChangeLeftOffset(long index)
+        {
+            for (long i = index; i < _length; i++)
+            {
+                SortedArray[i - 1] = SortedArray[i];
             }
         }
 
@@ -137,8 +158,8 @@
                 return;
             }
             // scan from high(score) to low, once find the index , break loop
-            long index = 0;
-            for (long i = 0; i <= _length; i++)
+            long index = _length;
+            for (long i = 0; i < _length; i++)
             {
                 if (score > SortedArray[i].Score)
                 {
@@ -150,17 +171,20 @@
                     index = i;
                     break;
                 }
-                index = i;
             }
+
             // find the insert position
             // move right after index
-            for (long j = _length; j >= index; j--)
+            for (long j = _length; j > index; j--)
             {
                 SortedArray[j] = SortedArray[j - 1];
-                _customerRank[SortedArray[j - 1].Customerid] = j;
+                // change rank value
+                _customerRank[SortedArray[j].Customerid] = j + 1;
             }
-            _customerRank.Add(customerid, index + 1);
+
             SortedArray[index] = (customerid, score);
+            _customerRank.Add(customerid, index + 1);
+
             _length++;
 
         }
@@ -172,9 +196,10 @@
                 _customerRank[SortedArray[index].Customerid] = index + 1;
                 return;
             }
-            // scan from left to right, if found the score position break.
-            long flag = start;
 
+            // scan from left to right, if found the score position break.
+            long flag = end;
+            var temp = SortedArray[index];
             for (long i = start; i < end; i++)
             {
                 if (SortedArray[index].Score > SortedArray[i].Score)
@@ -193,7 +218,8 @@
                 _customerRank[SortedArray[j].Customerid] = j + 1;
                 SortedArray[j] = SortedArray[j - 1];
             }
-
+            SortedArray[flag] = temp;
+            
         }
     }
 }
