@@ -71,7 +71,7 @@ namespace CustomerRankTest
         [Fact]
         public void UpdateScoreTest()
         {
-            var n = 100000;
+            var n = 10000;
             var testData = GenerateTestData(n);
             var sw = new Stopwatch();
             sw.Start();

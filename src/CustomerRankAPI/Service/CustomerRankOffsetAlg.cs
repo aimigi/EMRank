@@ -86,7 +86,7 @@
                     var oldScore = SortedArray[index].Score;
                     var newScore = oldScore + score;
                     SortedArray[index] = (customerid, newScore);
-                   
+
                     // remove customer
                     if (newScore == 0)
                     {
@@ -200,24 +200,25 @@
             var temp = SortedArray[index];
             for (long i = start; i < end; i++)
             {
-                if (SortedArray[index].Score > SortedArray[i].Score)
+                if (temp.Score > SortedArray[i].Score)
                 {
                     flag = i;
                     break;
                 }
-                else if (SortedArray[index].Score == SortedArray[i].Score && SortedArray[index].Customerid < SortedArray[i].Customerid)
+                else if (temp.Score == SortedArray[i].Score && temp.Customerid < SortedArray[i].Customerid)
                 {
                     flag = i;
                     break;
                 }
             }
+            
             for (long j = end; j > flag; j--)
             {
-                _customerRank[SortedArray[j].Customerid] = j + 1;
                 SortedArray[j] = SortedArray[j - 1];
+                _customerRank[SortedArray[j].Customerid] = j + 1;               
             }
             SortedArray[flag] = temp;
-            
+            _customerRank[temp.Customerid] = flag + 1;
         }
     }
 }
