@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerRankAPI", "CustomerRankAPI\CustomerRankAPI.csproj", "{48BD22C9-AC52-42EC-9F63-215542A99C9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerRankAPI", "CustomerRankAPI\CustomerRankAPI.csproj", "{48BD22C9-AC52-42EC-9F63-215542A99C9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerRankTest", "CustomerRankTest\CustomerRankTest.csproj", "{06CC23FE-B7A6-4D51-98D8-33D8A94B4846}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerRankTest", "CustomerRankTest\CustomerRankTest.csproj", "{06CC23FE-B7A6-4D51-98D8-33D8A94B4846}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomerRankConsoleTest", "CustomerRankConsoleTest\CustomerRankConsoleTest.csproj", "{3DDD793F-F856-496D-88D2-742C61F4C856}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{06CC23FE-B7A6-4D51-98D8-33D8A94B4846}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06CC23FE-B7A6-4D51-98D8-33D8A94B4846}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06CC23FE-B7A6-4D51-98D8-33D8A94B4846}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DDD793F-F856-496D-88D2-742C61F4C856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DDD793F-F856-496D-88D2-742C61F4C856}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DDD793F-F856-496D-88D2-742C61F4C856}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DDD793F-F856-496D-88D2-742C61F4C856}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
