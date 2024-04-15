@@ -1,5 +1,4 @@
 using CustomerRankAPI;
-using CustomerRankAPI.RBTree;
 using CustomerRankAPI.Service;
 using System.Diagnostics;
 using Xunit.Abstractions;
@@ -32,12 +31,11 @@ namespace CustomerRankTest
         private readonly ITestOutputHelper _output;
         public RankServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _service = new CustomerRankOffsetAlg();
+            _service = new SkipListRankService();
+                //new RBTreeRankService();
 
             _output = testOutputHelper;
         }
-
-
 
         private List<(long CustomerId, int Score)> GenerateTestData(int n)
         {
@@ -50,6 +48,8 @@ namespace CustomerRankTest
             }
             return ret;
         }
+
+
         [Fact]
         public void UpdateScorePerformanceTest()
         {
@@ -67,7 +67,6 @@ namespace CustomerRankTest
 
             Assert.True(true);
         }
-
 
 
         [Fact]
@@ -89,13 +88,15 @@ namespace CustomerRankTest
         [Fact]
         public void GetCustomersByRankTest()
         {
-            var tree = new Tree<CustomerScoreRankModel>();
             TestData.ForEach(item =>
             {
-                //tree.Insert(new CustomerScoreRankModel { Customerid = item.CustomerId, Score = item.Socre });
+                _service.UpdateCustomerScore(item.CustomerId, item.Socre);
             });
-
-            tree.PrindNode();
+            var ret = _service.GetCustomersByRank(3, 100);
+            foreach (var item in ret)
+            {
+                _output.WriteLine($"customer id:{item.Customerid},score:{item.Score},rank:{item.Rank}");
+            }
             Assert.True(true);
         }
 

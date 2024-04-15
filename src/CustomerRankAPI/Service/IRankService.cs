@@ -3,7 +3,7 @@
     public interface IRankService
     {       
         IEnumerable<CustomerScoreRankModel> GetCustomerNearRank(long customerid, int high, int low);
-        IEnumerable<CustomerScoreRankModel> GetCustomersByRank(long start, long end);
+        IEnumerable<CustomerScoreRankModel> GetCustomersByRank(int start, int end);
         bool UpdateCustomerScore(long customerid, int score);
     }
 }

@@ -1,15 +1,17 @@
 ﻿namespace CustomerRankAPI
 {
-    public class SkipListNode<T>
+    public class SkipListNode<T> where T : IRankIndexNode
     {
-        private T _value;
-        public int _key;
-        private SkipListNode<T>[] link;
-        public SkipListNode(int level, int key, T value)
+        public T Value { get; set; }
+        public int Index { get; set; } = 0;
+        /// <summary>
+        /// store the next node reference
+        /// </summary>
+        public SkipListNode<T>[] Forward { get; set; }
+        public SkipListNode(T value, int level)
         {
-            _value = value;
-            _key = key;
-            link = new SkipListNode<T>[level];
+            Value = value;
+            Forward = new SkipListNode<T>[level + 1];
         }
     }
 }
